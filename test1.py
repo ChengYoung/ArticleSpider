@@ -1,8 +1,22 @@
+import pymysql
 import requests
-from lxml import etree
 
-url="https://bj.lianjia.com/ershoufang/"
-response = requests.get(url)
-#sss = etree.HTML(response)
-#message = sss.xpath("//*[@id='leftContent']/ul/li[1]/div/div[1]/a/text()")[0]
-print(response)
+connect = pymysql.Connect(
+    host="localhost",
+    port=3306,
+    user="root",
+    passwd="774841525",
+    db="learn",
+    charset="utf8"
+)
+cursor = connect.cursor()
+cursor.execute("DROP TABLE IF EXISTS car_articles")
+sql ='''CREATE TABLE car_articles(
+        articles_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        articles_title TEXT NOT NULL,
+        articles_marks TEXT NOT NULL,
+        articles_content TEXT NOT NULL
+        )AUTO_INCREMENT=1
+    '''
+cursor.execute(sql)
+connect.close()
