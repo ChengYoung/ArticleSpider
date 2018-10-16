@@ -23,9 +23,9 @@ class CatchArticles:
         self.cursor = self.connect.cursor()
         self.sql = "INSERT INTO learn.car_articles(articles_title,articles_marks,articles_content) VALUES(%s,%s,%s)"
         self.mail_host= "smtp.163.com"
-        self.mail_user= os.environ.get("MAIL_USERNAME")
-        self.mail_pass= os.environ.get("MAIL_PASSWORD")
-        self.sender = os.environ.get("MAIL_USERNAME")
+        self.mail_user= "holmes19950506@163.com"
+        self.mail_pass= "chengxin0508"
+        self.sender = "holmes19950506@163.com"
         self.receivers = ['qiancheng123456@live.com']
 
     def selectAttributions(self):
@@ -65,10 +65,10 @@ class CatchArticles:
         print("the job is over")
         self.cursor.close()
         self.connect.close()
-        message = MIMEText('爬虫任务已经完成,请查看数据库信息', 'plain', 'utf-8')
-        message['From'] = os.environ.get("MAIL_USERNAME")
+        message = MIMEText('爬虫任务已经完成,请您查看数据库信息', 'plain', 'utf-8')
+        message['From'] = "holmes19950506@163.com"
         message['To'] =  "qiancheng123456@live.com"
-        subject = '任务已经完成'
+        subject = '您的任务已经完成'
         message['Subject'] = Header(subject, 'utf-8')
         try:
             smtpObj = smtplib.SMTP() 

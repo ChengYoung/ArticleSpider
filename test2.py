@@ -5,18 +5,18 @@ from email.header import Header
  
 # 第三方 SMTP 服务
 mail_host= "smtp.163.com"  #设置服务器
-mail_user= os.environ.get("MAIL_USERNAME")    #用户名
-mail_pass= os.environ.get("MAIL_PASSWORD")   #口令 
+mail_user= "holmes19950506@163.com"    #用户名
+mail_pass= "chengxin0508"   #口令 
  
  
-sender = os.environ.get("MAIL_USERNAME")
-receivers = ['qiancheng123456@live.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+sender = "holmes19950506@163.com" 
+receivers = ['774841525@qq.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
  
-message = MIMEText('Python 邮件发送测试...', 'plain', 'utf-8')
-message['From'] = os.environ.get("MAIL_USERNAME")
-message['To'] =  'qiancheng123456@live.com'
+message = MIMEText('爬虫任务已经完成', 'plain', 'utf-8')
+message['From'] = "holmes19950506@163.com"
+message['To'] =  '774841525@qq.com'
  
-subject = '任务已经完成'
+subject = '请您查收'
 message['Subject'] = Header(subject, 'utf-8')
  
  
