@@ -52,7 +52,8 @@ class CatchArticles:
                     self.cursor.execute(self.sql,[ArticleTitle,ArticleMarks,ArticleContent])
                     self.connect.commit()
             currentPage = currentPage + 1
-            print(currentPage)
+            print("now,we are catching the" + currentPage + "page")
+        print("the job is over")
         self.cursor.close()
         self.connect.close()
 
