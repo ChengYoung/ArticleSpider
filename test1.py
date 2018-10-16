@@ -7,7 +7,7 @@ connect = pymysql.Connect(
     user="root",
     passwd="774841525",
     db="learn",
-    charset="utf8"
+    charset="utf8mb4"
 )
 cursor = connect.cursor()
 cursor.execute("DROP TABLE IF EXISTS car_articles")
