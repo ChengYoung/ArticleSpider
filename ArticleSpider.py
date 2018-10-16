@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+import os
 import requests
 import re
 from lxml import etree
 import pymysql
+import smtplib
+from email.mime.text import MIMEText
+from email.header import Header
 
 class CatchArticles:
     def __init__(self):
@@ -18,6 +22,11 @@ class CatchArticles:
         )
         self.cursor = self.connect.cursor()
         self.sql = "INSERT INTO learn.car_articles(articles_title,articles_marks,articles_content) VALUES(%s,%s,%s)"
+        self.mail_host= "smtp.163.com"
+        self.mail_user= os.environ.get("MAIL_USERNAME")
+        self.mail_pass= os.environ.get("MAIL_PASSWORD")
+        self.sender = os.environ.get("MAIL_USERNAME")
+        self.receivers = ['qiancheng123456@live.com']
 
     def selectAttributions(self):
         response = requests.get(self.base_url).content.decode("gb2312",errors="ignore")
@@ -56,6 +65,19 @@ class CatchArticles:
         print("the job is over")
         self.cursor.close()
         self.connect.close()
+        message = MIMEText('爬虫任务已经完成,请查看数据库信息', 'plain', 'utf-8')
+        message['From'] = os.environ.get("MAIL_USERNAME")
+        message['To'] =  "qiancheng123456@live.com"
+        subject = '任务已经完成'
+        message['Subject'] = Header(subject, 'utf-8')
+        try:
+            smtpObj = smtplib.SMTP() 
+            smtpObj.connect(self.mail_host, 25)
+            smtpObj.login(self.mail_user,self.mail_pass) 
+            smtpObj.sendmail(self.sender, self.receivers, message.as_string())
+            print ("邮件发送成功")
+        except smtplib.SMTPException as e:
+            print ("Error: 无法发送邮件",e)
 
 if __name__=="__main__":
     demo = CatchArticles()
