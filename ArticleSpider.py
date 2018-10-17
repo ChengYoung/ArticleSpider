@@ -46,30 +46,32 @@ class CatchArticles:
         print(page)
         while(currentPage < page):
             try:
-                response = requests.get(self.base_url+str(currentPage)+"/#liststart").content.decode("gb2312",errors="ignore")
+                responseTemp = requests.get(self.base_url+str(currentPage)+"/#liststart")
             except:
                 times = 1
-                while(times<10 and response.status_code!=200):
+                while(times<10 and responseTemp.status_code !=200):
                     time.sleep(3)
                     print("正在重新连接")
-                    response = requests.get(self.base_url+str(currentPage)+"/#liststart").content.decode("gb2312",errors="ignore")
+                    responseTemp = requests.get(self.base_url+str(currentPage)+"/#liststart")
                     times = times + 1
-                if response.status_code!=200:
+                if responseTemp.status_code!=200:
                     continue
+            response = responseTemp.content.decode("gb2312",errors="ignore")
             tree = etree.HTML(response)
             for element in tree.xpath("//ul[@class='article']/li[not(@style)]"):
                 ArticleURL = "https:" + element.xpath("a/@href")[0]
                 try:
-                    response = requests.get(ArticleURL).content.decode("gb2312",errors="ignore")
+                    responseTemp = requests.get(ArticleURL)
                 except:
                     times = 1
-                    while(times<10 and response.status_code!=200):
+                    while(times<10 and responseTemp.status_code!=200):
                         time.sleep(3)
                         print("正在重新连接")
-                        response = requests.get(ArticleURL).content.decode("gb2312",errors="ignore")
+                        responseTemp = requests.get(ArticleURL)
                         times = times + 1
-                    if response.status_code!=200:
+                    if responseTemp.status_code!=200:
                         continue
+                response = responseTemp.content.decode("gb2312",errors="ignore")
                 tree = etree.HTML(response)
                 try:
                     ArticleTitle = ",".join(tree.xpath("//div[@class='article-details']/h1/text()")[0].split())

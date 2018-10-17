@@ -43,4 +43,6 @@ import pymysql
 url = "https://www.autohome.com.cn/news/"
 
 response = requests.get(url)
-print(response.status_code)
+response.encoding = "gb2312"
+response1 = response.text()
+print(response1)
