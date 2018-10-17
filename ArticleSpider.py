@@ -2,6 +2,7 @@
 import os
 import requests
 import re
+import time
 from lxml import etree
 import pymysql
 import smtplib
@@ -48,7 +49,12 @@ class CatchArticles:
             tree = etree.HTML(response)
             for element in tree.xpath("//ul[@class='article']/li[not(@style)]"):
                 ArticleURL = "https:" + element.xpath("a/@href")[0]
-                response = requests.get(ArticleURL).content.decode("gb2312",errors="ignore")
+                try:
+                    response = requests.get(ArticleURL).content.decode("gb2312",errors="ignore")
+                except requests.exceptions.ConnectionError :
+                    time.sleep(3)
+                    response = requests.get(ArticleURL).content.decode("gb2312",errors="ignore")
+                    print("正在重新连接")
                 tree = etree.HTML(response)
                 try:
                     ArticleTitle = ",".join(tree.xpath("//div[@class='article-details']/h1/text()")[0].split())
@@ -61,7 +67,10 @@ class CatchArticles:
                     self.cursor.execute(self.sql,[ArticleTitle,ArticleMarks,ArticleContent])
                     self.connect.commit()
             currentPage = currentPage + 1
-            print("now,we are catching the" + str(currentPage) + "page")
+            print("now,we are catching the " + str(currentPage) + " page")
+            if isinstance(currentPage/50,int):
+                time.sleep(1)
+                print("sleep one second") 
         print("the job is over")
         self.cursor.close()
         self.connect.close()
