@@ -23,10 +23,10 @@ class CatchArticles:
         self.cursor = self.connect.cursor()
         self.sql = "INSERT INTO learn.car_articles(articles_title,articles_marks,articles_content) VALUES(%s,%s,%s)"
         self.mail_host= "smtp.163.com"
-        self.mail_user= "holmes19950506@163.com"
-        self.mail_pass= "chengxin0508"
-        self.sender = "holmes19950506@163.com"
-        self.receivers = ['qiancheng123456@live.com']
+        self.mail_user= os.environ.get("MAIL_USERNAME")
+        self.mail_pass= os.environ.get("MAIL_PASSWORD")
+        self.sender = os.environ.get("MAIL_USERNAME")
+        self.receivers = ['774841525@qq.com']
 
     def selectAttributions(self):
         response = requests.get(self.base_url).content.decode("gb2312",errors="ignore")
@@ -66,13 +66,13 @@ class CatchArticles:
         self.cursor.close()
         self.connect.close()
         message = MIMEText('爬虫任务已经完成,请您查看数据库信息', 'plain', 'utf-8')
-        message['From'] = "holmes19950506@163.com"
-        message['To'] =  "qiancheng123456@live.com"
+        message['From'] = os.environ.get("MAIL_USERNAME")
+        message['To'] =  "774841525@qq.com"
         subject = '您的任务已经完成'
         message['Subject'] = Header(subject, 'utf-8')
         try:
-            smtpObj = smtplib.SMTP() 
-            smtpObj.connect(self.mail_host, 25)
+            smtpObj = smtplib.SMTP_SSL() 
+            smtpObj.connect(self.mail_host, 465)
             smtpObj.login(self.mail_user,self.mail_pass) 
             smtpObj.sendmail(self.sender, self.receivers, message.as_string())
             print ("邮件发送成功")
