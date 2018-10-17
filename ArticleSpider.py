@@ -45,20 +45,35 @@ class CatchArticles:
         currentPage = 1
         print(page)
         while(currentPage < page):
-            response = requests.get(self.base_url+str(currentPage)+"/#liststart").content.decode("gb2312",errors="ignore")
+            try:
+                response = requests.get(self.base_url+str(currentPage)+"/#liststart").content.decode("gb2312",errors="ignore")
+            except:
+                times = 1
+                while(times<10 and response.status_code!=200):
+                    time.sleep(3)
+                    print("正在重新连接")
+                    response = requests.get(self.base_url+str(currentPage)+"/#liststart").content.decode("gb2312",errors="ignore")
+                    times = times + 1
+                if response.status_code!=200:
+                    continue
             tree = etree.HTML(response)
             for element in tree.xpath("//ul[@class='article']/li[not(@style)]"):
                 ArticleURL = "https:" + element.xpath("a/@href")[0]
                 try:
                     response = requests.get(ArticleURL).content.decode("gb2312",errors="ignore")
-                except requests.exceptions.ConnectionError :
-                    time.sleep(3)
-                    response = requests.get(ArticleURL).content.decode("gb2312",errors="ignore")
-                    print("正在重新连接")
+                except:
+                    times = 1
+                    while(times<10 and response.status_code!=200):
+                        time.sleep(3)
+                        print("正在重新连接")
+                        response = requests.get(ArticleURL).content.decode("gb2312",errors="ignore")
+                        times = times + 1
+                    if response.status_code!=200:
+                        continue
                 tree = etree.HTML(response)
                 try:
                     ArticleTitle = ",".join(tree.xpath("//div[@class='article-details']/h1/text()")[0].split())
-                except IndexError:
+                except:
                     continue
                 else:
                     ArticleMarks = "".join(tree.xpath("//div[@class='marks']/a/text()"))
@@ -68,7 +83,7 @@ class CatchArticles:
                     self.connect.commit()
             currentPage = currentPage + 1
             print("now,we are catching the " + str(currentPage) + " page")
-            if isinstance(currentPage/50,int):
+            if currentPage % 50 == 0:
                 time.sleep(1)
                 print("sleep one second") 
         print("the job is over")
